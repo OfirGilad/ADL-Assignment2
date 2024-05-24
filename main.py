@@ -25,7 +25,8 @@ def task1(eps=1e-3, delta=1e-5, itr=10000):
     plt.xlabel('Iteration')
     plt.ylabel('Error (|Ax - b|^2)')
     plt.title('Error Plot of Gradient Descent')
-    plt.plot(err_graph)
+    plt.plot(err_graph, label='Error')
+    plt.legend()
     plt.show()
 
 
@@ -328,5 +329,5 @@ if __name__ == '__main__':
     # task1GPT()
     task2()
     # task2GPT(20000,1e-4, 1e-15)
-    task3()
+    # task3()
     # task3GPT()
