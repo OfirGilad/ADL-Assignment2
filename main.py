@@ -4,27 +4,27 @@ from sklearn.datasets import load_diabetes
 from sklearn.model_selection import train_test_split
 
 
-def task1():
+def task1(eps=1e-3, delta=1e-5, itr=10000):
     A = diabetes.data
     b = diabetes.target
-    eps = 1e-3
-    x0 = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-    itr = 20000
-    delta = 1e-8
-    err_fun = lambda x: .5 * np.linalg.norm(A @ x - b) ** 2
-    err_graph = []
+    err_func = lambda x: .5 * np.linalg.norm(A @ x - b) ** 2
+    err_graph = list()
 
+    x0 = np.zeros(A.shape[1])
+    x = x0
     for i in range(itr):
-        grad = (A.T @ A) @ x0 - A.T @ b
-        x = x0 - eps * grad
-        err = err_fun(x)
+        grad = (A.T @ A) @ x - A.T @ b
+        x = x - eps * grad
+        err = err_func(x)
         err_graph.append(err)
         if np.linalg.norm(grad) < delta:
             print(f'GD converged after {i} iterations')
             break
-        x0 = x
-    plt.xlabel("iteration")
-    plt.ylabel("error")
+
+    err_graph = np.stack(err_graph)
+    plt.xlabel('Iteration')
+    plt.ylabel('Error (|Ax - b|^2)')
+    plt.title('Error Plot of Gradient Descent')
     plt.plot(err_graph)
     plt.show()
 
@@ -36,7 +36,7 @@ def task1GPT():
     # Gradient Descent parameters
     eps = 0.001  # Step size (learning rate)
     delta = 1e-6  # Stopping condition
-    max_iterations = 1000  # Maximum number of iterations
+    max_iterations = 2000  # Maximum number of iterations
 
     # Initialize variables
     n_samples, n_features = A.shape
@@ -81,7 +81,7 @@ def task2GPT(max_iterations=100000, eps=0.001, delta=1e-6):
     b = diabetes.target  # Target vector (442,)
 
     # Split the dataset into training and test sets
-    A_train, A_test, b_train, b_test = train_test_split(A, b, test_size=0.5, random_state=42)
+    A_train, A_test, b_train, b_test = train_test_split(A, b, test_size=0.2, random_state=42)
 
     # Gradient Descent parameters
     # eps = 0.001  # Step size (learning rate)
@@ -131,30 +131,32 @@ def task2GPT(max_iterations=100000, eps=0.001, delta=1e-6):
     plt.show()
 
 
-def task2(itr=100000, eps=1e-3, delta=1e-9):
-    A, A_test, b, b_test = train_test_split(diabetes.data, diabetes.target, test_size=0.5, random_state=42)
-    # eps = 1e-3
-    x0 = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-    # itr = 100000
-    # delta = 1e-9
-    err_fun = lambda x: .5 * (np.linalg.norm(A @ x - b) ** 2)
-    err_fun_test = lambda x: .5 * (np.linalg.norm(A_test @ x - b_test) ** 2)
-    err_graph = []
-    err_graph_test = []
+def task2(eps=1e-3, delta=1e-5, itr=10000):
+    A_train, A_test, b_train, b_test = train_test_split(diabetes.data, diabetes.target, test_size=0.2, random_state=42)
+    err_fun_train = lambda x: .5 * np.linalg.norm(A_train @ x - b_train) ** 2
+    err_fun_test = lambda x: .5 * np.linalg.norm(A_test @ x - b_test) ** 2
+    err_graph_train = list()
+    err_graph_test = list()
 
+    x0 = np.zeros(A_train.shape[1])
+    x = x0
     for i in range(itr):
-        grad = (A.T @ A) @ x0 - A.T @ b
-        x = x0 - eps * grad
-        err = err_fun(x)
-        err_graph.append(err)
-        err_graph_test.append(err_fun_test(x))
+        grad = (A_train.T @ A_train) @ x - A_train.T @ b_train
+        x = x - eps * grad
+        train_err = err_fun_train(x)
+        test_err = err_fun_test(x)
+        err_graph_train.append(train_err)
+        err_graph_test.append(test_err)
         if np.linalg.norm(grad) < delta:
             print(f'GD converged after {i} iterations')
             break
-        x0 = x
-    plt.xlabel("iteration")
-    plt.ylabel("error")
-    plt.plot(err_graph, label='Train Error')
+
+    err_graph_train = np.stack(err_graph_train)
+    err_graph_test = np.stack(err_graph_test)
+    plt.xlabel('Iteration')
+    plt.ylabel('Error (|Ax - b|^2)')
+    plt.title('Train and Test Error Plot of Gradient Descent')
+    plt.plot(err_graph_train, label='Train Error')
     plt.plot(err_graph_test, label='Test Error')
     plt.legend()
     plt.show()
@@ -267,40 +269,41 @@ def average_and_minimum_graphs(graphs):
     return average_graph, minimum_graph
 
 
-def task3():
-    acc_train_err = []
-    acc_test_err = []
+def task3(eps=1e-3, delta=1e-5, itr=10000):
+    acc_train_err = list()
+    acc_test_err = list()
     for rounds in range(10):
-        A, A_test, b, b_test = train_test_split(diabetes.data, diabetes.target, test_size=0.2, random_state=42)
-        eps = 1e-3
-        x0 = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-        itr = 10000
-        delta = 1e-9
-        err_fun = lambda x: .5 * np.linalg.norm(A @ x - b) ** 2
+        A_train, A_test, b_train, b_test = train_test_split(diabetes.data, diabetes.target, test_size=0.2)
+        err_fun_train = lambda x: .5 * np.linalg.norm(A_train @ x - b_train) ** 2
         err_fun_test = lambda x: .5 * np.linalg.norm(A_test @ x - b_test) ** 2
-        err_graph = []
-        err_graph_test = []
+        err_graph_train = list()
+        err_graph_test = list()
 
+        x0 = np.random.rand(A_train.shape[1])
+        x = x0
         for i in range(itr):
-            grad = (A.T @ A) @ x0 - A.T @ b
-            x = x0 - eps * grad
-            err = err_fun(x)
-            err_graph.append(err)
-            err_graph_test.append(err_fun_test(x))
+            grad = (A_train.T @ A_train) @ x - A_train.T @ b_train
+            x = x - eps * grad
+            err_train = err_fun_train(x)
+            err_test = err_fun_test(x)
+            err_graph_train.append(err_train)
+            err_graph_test.append(err_test)
             if np.linalg.norm(grad) < delta:
                 print(f'GD converged after {i} iterations')
                 break
-            x0 = x
-        acc_train_err.append(err_graph)
+
+        acc_train_err.append(err_graph_train)
         acc_test_err.append(err_graph_test)
+
     avg_train_err, min_train_err = average_and_minimum_graphs(acc_train_err)
     avg_test_err, min_test_err = average_and_minimum_graphs(acc_test_err)
+
     # Avg
     plt.figure(figsize=(10, 5))
     plt.plot(avg_train_err, label='Average Train Error')
     plt.plot(avg_test_err, label='Average Test Error')
     plt.xlabel('Iteration')
-    plt.ylabel('Error')
+    plt.ylabel('Error (|Ax - b|^2)')
     plt.title('Average Train and Test Error Plot')
     plt.legend()
     plt.show()
@@ -310,7 +313,7 @@ def task3():
     plt.plot(min_train_err, label='Minimum Train Error')
     plt.plot(min_test_err, label='Minimum Test Error')
     plt.xlabel('Iteration')
-    plt.ylabel('Error')
+    plt.ylabel('Error (|Ax - b|^2)')
     plt.title('Minimum Train and Test Error Plot')
     plt.legend()
     plt.show()
@@ -321,10 +324,9 @@ if __name__ == '__main__':
     print(diabetes.data.shape)  # 442 * 10
     print(diabetes.target.shape)  # 442
 
-    # task1()
+    task1()
     # task1GPT()
-    task2GPT()
-    task2(20000, 1e-4, 1e-15)
-    # task2GPT(50000,1e-4, 1e-15)
-    # task3()
+    task2()
+    # task2GPT(20000,1e-4, 1e-15)
+    task3()
     # task3GPT()
