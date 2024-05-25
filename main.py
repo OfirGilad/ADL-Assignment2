@@ -24,7 +24,7 @@ def task1(eps=1e-3, delta=1e-5, itr=1000):
     err_graph = np.stack(err_graph)
     plt.xlabel('Iteration')
     plt.ylabel('Error (|Ax - b|^2)')
-    plt.title('Task 1: Error Plot of Gradient Descent')
+    plt.title('Task 1: Gradient Descent Errors')
     plt.plot(err_graph, label='Error')
     plt.legend()
     plt.show()
@@ -32,8 +32,8 @@ def task1(eps=1e-3, delta=1e-5, itr=1000):
 
 def task2(eps=1e-3, delta=1e-5, itr=1000):
     A_train, A_test, b_train, b_test = train_test_split(diabetes.data, diabetes.target, test_size=0.2, random_state=42)
-    err_fun_train = lambda x: .5 * np.linalg.norm(A_train @ x - b_train) ** 2
-    err_fun_test = lambda x: .5 * np.linalg.norm(A_test @ x - b_test) ** 2
+    err_func_train = lambda x: .5 * np.linalg.norm(A_train @ x - b_train) ** 2
+    err_func_test = lambda x: .5 * np.linalg.norm(A_test @ x - b_test) ** 2
     err_graph_train = list()
     err_graph_test = list()
 
@@ -42,8 +42,8 @@ def task2(eps=1e-3, delta=1e-5, itr=1000):
     for i in range(itr):
         grad = (A_train.T @ A_train) @ x - A_train.T @ b_train
         x = x - eps * grad
-        train_err = err_fun_train(x)
-        test_err = err_fun_test(x)
+        train_err = err_func_train(x)
+        test_err = err_func_test(x)
         err_graph_train.append(train_err)
         err_graph_test.append(test_err)
         if np.linalg.norm(grad) < delta:
@@ -54,7 +54,7 @@ def task2(eps=1e-3, delta=1e-5, itr=1000):
     err_graph_test = np.stack(err_graph_test)
     plt.xlabel('Iteration')
     plt.ylabel('Error (|Ax - b|^2)')
-    plt.title('Task 2: Train and Test Error Plot of Gradient Descent')
+    plt.title('Task 2: Gradient Descent Train and Test Errors')
     plt.plot(err_graph_train, label='Train Error')
     plt.plot(err_graph_test, label='Test Error')
     plt.legend()
@@ -66,8 +66,8 @@ def task3(eps=1e-3, delta=1e-5, itr=1000):
     all_err_test = list()
     for rounds in range(10):
         A_train, A_test, b_train, b_test = train_test_split(diabetes.data, diabetes.target, test_size=0.2)
-        err_fun_train = lambda x: .5 * np.linalg.norm(A_train @ x - b_train) ** 2
-        err_fun_test = lambda x: .5 * np.linalg.norm(A_test @ x - b_test) ** 2
+        err_func_train = lambda x: .5 * np.linalg.norm(A_train @ x - b_train) ** 2
+        err_func_test = lambda x: .5 * np.linalg.norm(A_test @ x - b_test) ** 2
         err_graph_train = list()
         err_graph_test = list()
 
@@ -76,8 +76,8 @@ def task3(eps=1e-3, delta=1e-5, itr=1000):
         for i in range(itr):
             grad = (A_train.T @ A_train) @ x - A_train.T @ b_train
             x = x - eps * grad
-            err_train = err_fun_train(x)
-            err_test = err_fun_test(x)
+            err_train = err_func_train(x)
+            err_test = err_func_test(x)
             err_graph_train.append(err_train)
             err_graph_test.append(err_test)
             if np.linalg.norm(grad) < delta:
@@ -99,7 +99,7 @@ def task3(eps=1e-3, delta=1e-5, itr=1000):
     plt.plot(avg_test_err, label='Average Test Error')
     plt.xlabel('Iteration')
     plt.ylabel('Error (|Ax - b|^2)')
-    plt.title('Task 3: Average Train and Test Error Plot')
+    plt.title('Task 3: Gradient Descent Average of Train and Test Errors')
     plt.legend()
     plt.show()
 
@@ -109,7 +109,7 @@ def task3(eps=1e-3, delta=1e-5, itr=1000):
     plt.plot(min_test_err, label='Minimum Test Error')
     plt.xlabel('Iteration')
     plt.ylabel('Error (|Ax - b|^2)')
-    plt.title('Task 3: Minimum Train and Test Error Plot')
+    plt.title('Task 3: Gradient Descent Minimum of Train and Test Errors')
     plt.legend()
     plt.show()
 
