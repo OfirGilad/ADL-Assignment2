@@ -30,7 +30,7 @@ def task1(eps=1e-3, delta=1e-5, itr=10000):
     plt.show()
 
 
-def task2(eps=1e-3, delta=1e-5, itr=1000):
+def task2(eps=1e-3, delta=1e-5, itr=10000):
     A_train, A_test, b_train, b_test = train_test_split(diabetes.data, diabetes.target, test_size=0.2, random_state=42)
     err_func_train = lambda x: np.linalg.norm(A_train @ x - b_train) ** 2
     err_func_test = lambda x: np.linalg.norm(A_test @ x - b_test) ** 2
@@ -61,7 +61,7 @@ def task2(eps=1e-3, delta=1e-5, itr=1000):
     plt.show()
 
 
-def task3(eps=1e-3, delta=1e-5, itr=1000):
+def task3(eps=1e-3, delta=1e-5, itr=10000):
     all_err_train = list()
     all_err_test = list()
     for rounds in range(10):
